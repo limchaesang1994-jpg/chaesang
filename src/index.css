@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
 
-root {
+:root {
   --primary: #6366f1;
   --secondary: #a855f7;
   --accent: #ec4899;
