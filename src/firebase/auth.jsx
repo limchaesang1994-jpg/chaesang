@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
     onAuthStateChanged,
-    signInWithPopup,
-    signOut
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signInAnonymously,
+    signOut,
+    updateProfile
 } from "firebase/auth";
-import { auth, googleProvider } from "./config";
+import { auth } from "./config";
 
 const AuthContext = createContext();
 
@@ -16,11 +19,35 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const loginWithGoogle = async () => {
+    // Email/Password Sign Up
+    const signupWithEmail = async (email, password, displayName) => {
         try {
-            await signInWithPopup(auth, googleProvider);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(userCredential.user, { displayName });
+            return userCredential.user;
         } catch (error) {
-            console.error("Login failed:", error);
+            throw error;
+        }
+    };
+
+    // Email/Password Sign In
+    const loginWithEmail = async (email, password) => {
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            return userCredential.user;
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    // Anonymous Login
+    const loginAnonymously = async () => {
+        try {
+            const userCredential = await signInAnonymously(auth);
+            await updateProfile(userCredential.user, { displayName: "익명 사용자" });
+            return userCredential.user;
+        } catch (error) {
+            throw error;
         }
     };
 
@@ -36,7 +63,9 @@ export function AuthProvider({ children }) {
 
     const value = {
         user,
-        loginWithGoogle,
+        signupWithEmail,
+        loginWithEmail,
+        loginAnonymously,
         logout,
         loading
     };

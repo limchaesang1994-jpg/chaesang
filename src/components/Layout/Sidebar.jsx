@@ -28,7 +28,8 @@ const Sidebar = () => {
             padding: '24px',
             display: 'flex',
             flexDirection: 'column',
-            position: 'fixed'
+            position: 'fixed',
+            zIndex: 100
         }}>
             <div style={{ marginBottom: '40px' }}>
                 <h2 className="title-gradient" style={{ fontSize: '1.8rem' }}>우리 교실</h2>
@@ -60,14 +61,30 @@ const Sidebar = () => {
             <div style={{ padding: '20px 0', borderTop: '1px solid var(--glass-border)' }}>
                 {user && (
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                        <img
-                            src={user.photoURL}
-                            alt="profile"
-                            style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '12px' }}
-                        />
-                        <div>
-                            <p style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user.displayName}</p>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{user.email}</p>
+                        <div style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '50%',
+                            marginRight: '12px',
+                            background: 'var(--gradient)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden'
+                        }}>
+                            {user.photoURL ? (
+                                <img src={user.photoURL} alt="profile" style={{ width: '100%', height: '100%' }} />
+                            ) : (
+                                <User size={24} color="white" />
+                            )}
+                        </div>
+                        <div style={{ overflow: 'hidden' }}>
+                            <p style={{ fontWeight: 600, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {user.displayName || '사용자'}
+                            </p>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {user.isAnonymous ? '익명 접속 중' : user.email}
+                            </p>
                         </div>
                     </div>
                 )}

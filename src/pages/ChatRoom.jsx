@@ -3,7 +3,7 @@ import { db } from '../firebase/config';
 import { collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../firebase/auth';
 import { motion } from 'framer-motion';
-import { Send } from 'lucide-react';
+import { Send, User } from 'lucide-react';
 
 const ChatRoom = () => {
     const [messages, setMessages] = useState([]);
@@ -28,8 +28,8 @@ const ChatRoom = () => {
             await addDoc(collection(db, 'messages'), {
                 text: newMessage,
                 authorId: user.uid,
-                authorName: user.displayName,
-                authorPhoto: user.photoURL,
+                authorName: user.displayName || '사용자',
+                authorPhoto: user.photoURL || null,
                 createdAt: serverTimestamp()
             });
             setNewMessage('');
@@ -53,11 +53,23 @@ const ChatRoom = () => {
                             gap: '8px'
                         }}
                     >
-                        <img
-                            src={msg.authorPhoto}
-                            alt="p"
-                            style={{ width: '32px', height: '32px', borderRadius: '50%' }}
-                        />
+                        <div style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            background: 'var(--glass)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden',
+                            flexShrink: 0
+                        }}>
+                            {msg.authorPhoto ? (
+                                <img src={msg.authorPhoto} alt="p" style={{ width: '100%', height: '100%' }} />
+                            ) : (
+                                <User size={18} color="white" />
+                            )}
+                        </div>
                         <div style={{ maxWidth: '70%' }}>
                             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px', textAlign: user.uid === msg.authorId ? 'right' : 'left' }}>
                                 {msg.authorName}
@@ -67,7 +79,8 @@ const ChatRoom = () => {
                                 borderRadius: '16px',
                                 background: user.uid === msg.authorId ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
                                 color: 'white',
-                                fontSize: '0.95rem'
+                                fontSize: '0.95rem',
+                                wordBreak: 'break-all'
                             }}>
                                 {msg.text}
                             </div>
